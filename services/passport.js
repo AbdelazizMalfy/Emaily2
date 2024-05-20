@@ -8,9 +8,10 @@ passport.serializeUser((user, done) => {
   done(null, user.id)
 })
 
-passport.deserializeUser(async (userId, done) => {
-  const user = await User.findById(userId)
-  done(null, user)
+passport.deserializeUser((id, done) => {
+  User.findById(id)
+    .then((user) => done(null, user))
+    .catch((err) => done(err, null))
 })
 
 module.exports = passport.use(
@@ -22,16 +23,21 @@ module.exports = passport.use(
       proxy: true,
     },
     async (accessToken, refreshToken, profile, done) => {
-      const existingUser = await User.findOne({ googleId: profile.id })
+      try {
+        const existingUser = await User.findOne({ googleId: profile.id })
 
-      if (!existingUser) {
-        console.log("Creating new user...")
-        const user = await new User({ googleId: profile.id }).save()
-        console.log("New user created!")
-        done(null, user)
-      } else {
-        console.log("user already exist")
-        done(null, existingUser)
+        if (!existingUser) {
+          console.log("Creating new user...")
+          const user = await new User({ googleId: profile.id }).save()
+          console.log("New user created!")
+          done(null, user)
+        } else {
+          console.log("user already exist")
+          done(null, existingUser)
+        }
+      } catch (err) {
+        console.error("Error during GoogleStrategy callback:", err)
+        done(err, null)
       }
     }
   )
