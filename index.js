@@ -33,7 +33,7 @@ app.use(
   session({
     secret: process.env.SESSION_SECRET,
     cookie: {
-      secure: false,
+      secure: process.env.SECURE_COOKIES || false,
       maxAge: 30 * 24 * 60 * 60 * 1000,
       sameSite: "lax",
       httpOnly: false,
