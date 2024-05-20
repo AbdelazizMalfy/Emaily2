@@ -33,9 +33,9 @@ app.use(
   session({
     secret: process.env.SESSION_SECRET,
     cookie: {
-      secure: process.env.SECURE_COOKIES || false,
+      secure: process.env.NODE_ENV === "production",
       maxAge: 30 * 24 * 60 * 60 * 1000,
-      sameSite: "lax",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       httpOnly: false,
     },
   })
