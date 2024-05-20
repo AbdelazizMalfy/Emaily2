@@ -12,7 +12,7 @@ module.exports = (app) => {
     "/auth/google/callback",
     passport.authenticate("google"),
     (req, res) => {
-      res.redirect("http://localhost:3000")
+      res.redirect(process.env.FRONTEND_URL)
     }
   )
 
